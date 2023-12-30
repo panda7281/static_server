@@ -1,0 +1,27 @@
+测试环境:
+i5-1240p@12C16T 16g wsl2 ubuntu 22.04
+测试工具:
+wrk
+
+本机测试:
+压力测试，使用脚本wrk/stress.lua
+8 worker threads, backlog=100
+Running 1m test @ http://127.0.0.1:12345
+  16 threads and 1000 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     4.12ms    3.67ms 425.40ms   98.86%
+    Req/Sec    15.45k     2.18k   21.13k    83.16%
+  14759783 requests in 1.00m, 7.51GB read
+Requests/sec: 245697.17
+Transfer/sec:    127.94MB
+
+模拟真实情况，使用脚本wrk/simu.lua
+8 worker threads, backlog=100
+Running 1m test @ http://127.0.0.1:12345
+  16 threads and 1000 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     3.73ms   13.21ms 522.27ms   99.37%
+    Req/Sec     1.85k   211.65     2.18k    94.41%
+  1766450 requests in 1.00m, 406.05GB read
+Requests/sec:  29395.20
+Transfer/sec:      6.76GB

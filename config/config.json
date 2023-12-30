@@ -1,0 +1,21 @@
+{
+    "host": "0.0.0.0",
+    "port": 12345,
+    "root": "www",
+    "loglevel": 1,
+    "backlog": 100,
+    "timeout": 10,
+    "threadpool": {
+        "workers" : 8,
+        "maxtask" : 20000
+    },
+    "cachepool": {
+        "maxsize" : 1073741824,
+        "maxitem" : 65536
+    },
+    "timer": {
+        "granularity": 10,
+        "interval": 1
+    }
+
+}

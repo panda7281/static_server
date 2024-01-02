@@ -8,6 +8,7 @@
 #include <fcntl.h>
 #include <signal.h>
 #include <string>
+#include <spdlog/spdlog.h>
 
 namespace Utils
 {
@@ -18,4 +19,5 @@ namespace Utils
     int setreusefd(int fd, bool on);
     int setsighandler(int signal, sighandler_t handler);
     std::string addr2str(sockaddr_in& addr);
+    spdlog::level::level_enum str2loglvl(std::string str);
 }

@@ -50,15 +50,19 @@ bool StaticServer::init()
     s_logger->info("-------------------------------");
     s_logger->info("[init] reading configurations");
     // 设置日志等级
-    int loglevelint = configJson["loglevel"].is_number_integer() ? configJson["loglevel"].get<int>() : 0;
-    spdlog::set_level(static_cast<spdlog::level::level_enum>(loglevelint));
-    s_logger->info("[init] log level is set to {}", loglevelint);
+    std::string loglevelstr = configJson["loglevel"].is_string() ? configJson["loglevel"].get<std::string>() : "";
+    spdlog::set_level(Utils::str2loglvl(loglevelstr));
+    s_logger->info("[init] log level is set to {}", loglevelstr);
     // 设置监听地址和端口
     std::string host = configJson["host"].is_string() ? configJson["host"].get<std::string>() : "0.0.0.0";
     uint16_t port = configJson["port"].is_number_unsigned() ? configJson["port"].get<uint16_t>() : 12345;
     s_logger->info("[init] host and port is set to {}:{}", host, port);
+    // backlog size
     int backlog = configJson["backlog"].is_number_unsigned() ? configJson["backlog"].get<int>() : 5;
+    s_logger->info("[init] backlog size is set to {}", backlog);
+    // 连接超时
     m_connection_timeout = configJson["timeout"].is_number_unsigned() ? configJson["timeout"].get<int>() : 10;
+    s_logger->info("[init] connection timeout is set to {}s", m_connection_timeout);
     // 设置服务器的根目录
     std::string root = configJson["root"].is_string() ? configJson["root"].get<std::string>() : "www";
     s_logger->info("[init] doc root is set to {}", root);

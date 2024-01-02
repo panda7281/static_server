@@ -47,4 +47,24 @@ namespace Utils
         addrstr += std::to_string(ntohs(addr.sin_port));
         return addrstr;
     }
+    spdlog::level::level_enum str2loglvl(std::string str)
+    {
+        spdlog::level::level_enum lvl = spdlog::level::trace;
+        if (str == "trace")
+            lvl = spdlog::level::trace;
+        else if (str == "debug")
+            lvl = spdlog::level::debug;
+        else if (str == "info")
+            lvl = spdlog::level::info;
+        else if (str == "warn")
+            lvl = spdlog::level::warn;
+        else if (str == "err")
+            lvl = spdlog::level::err;
+        else if (str == "critical")
+            lvl = spdlog::level::critical;
+        else if (str == "off")
+            lvl = spdlog::level::off;
+        
+        return lvl;
+    }
 }

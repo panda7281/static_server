@@ -2,7 +2,7 @@
     "host": "0.0.0.0",
     "port": 12345,
     "root": "www",
-    "loglevel": 1,
+    "loglevel": "trace",
     "backlog": 100,
     "timeout": 10,
     "threadpool": {

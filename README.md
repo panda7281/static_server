@@ -243,3 +243,9 @@ minikube tunnel
 ```
 
 此时，在本机访问`http://127.0.0.1:8080`即可访问服务器
+
+> 无负载
+![](./img/server_no_load.png)
+
+> 高负载
+![](./img/server_under_load.png)

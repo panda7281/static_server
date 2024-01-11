@@ -47,9 +47,9 @@ cmake --build build --config Release
 ```json
 {
     "host": "0.0.0.0",
-    "port": 12345,
+    "port": 8080,
     "root": "www",
-    "loglevel": "trace",
+    "loglevel": "info",
     "backlog": 100,
     "timeout": 10,
     "threadpool": {
@@ -120,3 +120,126 @@ cd static_server/
 请求频率: 29395.20req/s
 
 吞吐量: 6.76GB/s
+
+## 高可用性部署
+
+### 配置环境
+
+在wsl2(ubuntu 22.04)上的配置过程可以参考[minikube安装参考](https://gist.github.com/wholroyd/748e09ca0b78897750791172b2abb051)
+
+1. 安装docker
+
+```sh
+sudo apt-get remove docker docker-engine docker.io containerd runc
+sudo apt-get update
+sudo apt-get install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg-agent \
+    software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+sudo apt-get update
+sudo apt-get upgrade -y
+sudo apt-get install docker-ce docker-ce-cli containerd.io -y
+sudo groupadd docker
+sudo usermod -aG docker ${USER}
+su -s ${USER}
+```
+
+docker安装完成后，使用`docker run hello-world`进行测试
+
+2. 安装minikube
+
+```sh
+curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+chmod +x ./minikube
+sudo mv ./minikube /usr/local/bin/
+minikube config set driver docker
+```
+
+在wsl2中不要使用`.deb`格式的minikube安装包进行安装，这会导致`apt`自动安装minikube的全部依赖（包含virtualbox）
+
+### 制作容器镜像
+
+```sh
+cd static_server/
+docker build -t staticserver:v0.1 .
+```
+
+使用`docker image ls`可以确认镜像是否制作成功
+
+### 使用docker测试镜像
+
+假设web内容存放在`static_server/www`目录中，配置文件位于`static_server/config/config.json`(在使用容器时，host port root这三项应该保持为0.0.0.0 8080 www)
+
+使用以下命令启动一个容器
+
+```sh
+cd static_server/
+docker run -d -p 8080:8080 -v ./www:/app/www:ro -v ./config:/app/config:ro staticserver:v0.1
+```
+
+以上命令将容器的8080端口映射到了本机8080端口，在浏览器中打开`http://127.0.0.1:8080`可以确认服务器是否启动成功
+
+### 使用minikube进行高可用性部署
+
+1. 启动minikube虚拟机
+
+```sh
+minikube start
+alias kubectl="minikube kubectl --"
+```
+
+2. 将内容复制到minikube虚拟机中
+
+```sh
+scp -i $(minikube ssh-key) -r [path-to-webresource/www/]  docker@$(minikube ip):/home/docker
+scp -i $(minikube ssh-key) -r [path-to-serverconfig/www/]  docker@$(minikube ip):/home/docker
+```
+
+3. 在minikube虚拟机中创建容器镜像
+
+
+```sh
+cd cd static_server/
+eval $(minikube docker-env)
+docker build -t staticserver:v0.1 .
+```
+
+4. 创建Volume和VolumeClaim
+
+```sh
+kubectl apply -f k8s/config-volume-pv.yaml
+kubectl apply -f k8s/config-volume-pvc.yaml
+kubectl apply -f k8s/webresource-volume-pv.yaml
+kubectl apply -f k8s/webresource-volume-pvc.yaml
+```
+
+使用`kubectl get pv,pvc`可以确认是否创建成功
+
+5. 部署服务器
+
+```sh
+kubectl apply -f k8s/staticserver-deployment.yaml
+```
+
+使用`kubectl get deployment`确认部署是否成功
+
+6. 部署LoadBalancer
+
+```sh
+kubectl apply -f k8s/staticserver-service.yaml
+```
+
+7. 创建隧道
+
+```sh
+minikube tunnel
+```
+
+此时，在本机访问`http://127.0.0.1:8080`即可访问服务器

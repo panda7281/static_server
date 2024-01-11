@@ -1,8 +1,8 @@
 {
     "host": "0.0.0.0",
-    "port": 12345,
+    "port": 8080,
     "root": "www",
-    "loglevel": "trace",
+    "loglevel": "info",
     "backlog": 100,
     "timeout": 10,
     "threadpool": {
@@ -17,5 +17,4 @@
         "granularity": 10,
         "interval": 1
     }
-
 }

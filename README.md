@@ -29,8 +29,11 @@
 
 ### 安装依赖项
 
+如果没有安装依赖，则会使用`FetchContent`自动拉取，无需手动安装
+
 - [spdlog](https://github.com/gabime/spdlog): 提供日志功能
 - [json](https://github.com/nlohmann/json): 用于读取配置文件
+- [Catch2](https://github.com/catchorg/Catch2): 单元测试工具
 
 ### 使用CMake生成二进制文件
 
@@ -39,6 +42,22 @@ cd static_server/
 cmake -B build -S .
 cmake --build build --config Release
 ```
+
+## 单元测试
+
+本项目使用`Catch2`配合CMake中的`CTest`实现了以下组件的单元测试：
+- filecachepool
+- hashedwheeltimer
+- httpheaderparser
+- threadpool
+如果需要编译测试，需要定义`BUILD_TESTS=ON`，CMake会自动从github拉取Catch2
+在vscode中，可以在`.vscode/settings.json`中添加
+```json
+"cmake.configureArgs": [
+    "-DBUILD_TESTS=ON"
+]
+```
+进入`build`目录后使用`ctest`命令运行单元测试
 
 ## 配置
 

@@ -70,15 +70,18 @@ private:
 class FileCachePool
 {
 public:
-    struct FileContent
-    {
-        const void *data;
-        const struct stat *fstat;
-    };
+    /**
+     * @brief Construct a new File Cache Pool object
+     * 
+     * @param max_size max total file size in bytes 
+     * @param max_item max total file item count
+     */
     FileCachePool(off_t max_size, int max_item);
     ~FileCachePool();
 
     std::shared_ptr<FileCacheItem> getFile(const std::string &path);
+    off_t getCurrentSize();
+    int getCurrentItemCount();
 
 private:
     off_t m_maxSize, m_currSize;
@@ -89,4 +92,6 @@ private:
     std::mutex m_lock;
     
     void evict();
+    bool compareTimeSpec(const struct timespec& t1, const struct timespec& t2);
+    bool fileConsistencyCheck(const std::string &path, const struct stat& old_fstat);
 };

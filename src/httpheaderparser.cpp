@@ -57,7 +57,7 @@ HTTPHeaderParser::Status HTTPHeaderParser::parseRequest(int read_pos)
             else if (m_parsePos > m_headerFieldValueStartPos && m_headerFieldValueStartPos > m_lineStartPos)
             {
                 auto headerKey = std::string(m_buf + m_lineStartPos, m_headerFieldValueStartPos - m_lineStartPos - 2);
-                auto headerVal = std::string(m_buf + m_headerFieldValueStartPos, m_parsePos - m_headerFieldValueStartPos);
+                auto headerVal = std::string(m_buf + m_headerFieldValueStartPos, m_parsePos - m_headerFieldValueStartPos - 1);
                 m_requestHeader.opt[headerKey] = headerVal;
             }
             else

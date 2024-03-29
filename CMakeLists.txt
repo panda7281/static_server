@@ -37,9 +37,6 @@ else()
     FetchContent_MakeAvailable(nlohmann_json)
 endif()
 
-find_package(spdlog REQUIRED)
-find_package(nlohmann_json REQUIRED)
-
 include_directories(include)
 
 add_executable(${PROJECT_NAME} 

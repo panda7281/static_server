@@ -1,5 +1,6 @@
 #pragma once
 
+#include <fstream>
 #include <string>
 #include <stdexcept>
 #include <sys/stat.h>
@@ -14,7 +15,10 @@
  */
 void create_test_dir()
 {
-    system("mkdir -p test_dir");
+    if (system("mkdir -p test_dir") != 0)
+    {
+        std::runtime_error("fail to make test dir");
+    }
 }
 
 /**
@@ -50,5 +54,37 @@ std::string create_test_file(off_t size, std::string name)
  */
 void remove_test_dir()
 {
-    system("rm -rf test_dir");
+    if (system("rm -rf test_dir") != 0)
+    {
+        std::runtime_error("fail to remove test dir");
+    }
+}
+
+/**
+ * @brief check if the content of two files are identical
+ * 
+ * @param file1 
+ * @param file2 
+ * @return true 
+ * @return false 
+ */
+bool compareFiles(const std::string& file1, const std::string& file2) {
+    std::ifstream f1(file1, std::ios::binary | std::ios::ate);
+    std::ifstream f2(file2, std::ios::binary | std::ios::ate);
+
+    if (f1.fail() || f2.fail()) {
+        return false;
+    }
+
+    if (f1.tellg() != f2.tellg()) {
+        return false; // File sizes are different
+    }
+
+    f1.seekg(0);
+    f2.seekg(0);
+
+    std::vector<char> buf1(std::istreambuf_iterator<char>(f1), {});
+    std::vector<char> buf2(std::istreambuf_iterator<char>(f2), {});
+
+    return buf1 == buf2;
 }

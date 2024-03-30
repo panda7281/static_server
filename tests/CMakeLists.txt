@@ -32,6 +32,21 @@ add_executable(StaticServer_utests
     ../src/httpheaderparser.cpp
     ../src/threadpool.cpp
     )
+
+add_executable(StaticServer_stests
+    test_system.cpp
+    ../src/staticserver.cpp
+    ../src/httpheaderparser.cpp 
+    ../src/threadpool.cpp 
+    ../src/hashedwheeltimer.cpp
+    ../src/httpclienttask.cpp
+    ../src/filecachepool.cpp
+    ../src/utils.cpp
+    )
+
 target_link_libraries(StaticServer_utests PRIVATE Catch2::Catch2WithMain)
+target_link_libraries(StaticServer_stests PRIVATE Catch2::Catch2WithMain)
 add_test(NAME StaticServer_utests COMMAND StaticServer_utests)
+add_test(NAME StaticServer_stests COMMAND StaticServer_stests)
 set_tests_properties(StaticServer_utests PROPERTIES RUN_SERIAL ON)
+set_tests_properties(StaticServer_stests PROPERTIES RUN_SERIAL ON)

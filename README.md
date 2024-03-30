@@ -50,14 +50,19 @@ cmake --build build --config Release
 - hashedwheeltimer
 - httpheaderparser
 - threadpool
-如果需要编译测试，需要定义`BUILD_TESTS=ON`，CMake会自动从github拉取Catch2
+如果需要编译测试，需要定义`BUILD_TESTS=ON`，并且编译`StaticServer_utests`
 在vscode中，可以在`.vscode/settings.json`中添加
 ```json
 "cmake.configureArgs": [
     "-DBUILD_TESTS=ON"
 ]
 ```
-进入`build`目录后使用`ctest`命令运行单元测试
+
+## 系统测试
+
+本项目使用Catch2配合wget实现了系统测试，即测试能否通过HTTP请求正确的获取需要的静态资源
+如果需要进行系统测试，需要定义`BUILD_TESTS=ON`，并且编译`StaticServer_stests`
+进入`build`目录后使用`ctest`命令运行单元测试和系统测试
 
 ## 配置
 

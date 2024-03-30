@@ -24,6 +24,20 @@ TEST_CASE("File Cache Pool", "[basic]")
     remove_test_dir();
 }
 
+TEST_CASE("File Cache Pool", "[invalid file]")
+{
+    // create a 100KB pool
+    FileCachePool pool(102400, 5);
+    create_test_dir();
+    // access a directory
+    auto ptr = pool.getFile("test_dir");
+    REQUIRE(!ptr);
+    // access a invalid file
+    ptr = pool.getFile("some_random_file");
+    REQUIRE(!ptr);
+    remove_test_dir();
+}
+
 TEST_CASE("File Cache Pool", "[evict by size]")
 {
     // create a 3KB pool
